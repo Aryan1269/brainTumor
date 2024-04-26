@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Home() {
@@ -7,6 +7,7 @@ export default function Home() {
   const [prediction, setPrediction] = useState(null);
   const [selectedModel, setSelectedModel] = useState("braintumorCnn");
   const [model, setModel] = useState("CNN");
+  const [strike, setstrike] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -55,6 +56,23 @@ export default function Home() {
     }
   };
 
+  const f = file?.name.charAt(0);
+  const p = prediction?.charAt(0);
+
+  useEffect(() => {
+    if (file && prediction) {
+      const f = file.name.charAt(0);
+      const p = prediction.charAt(0);
+
+      if (f && p && f === p) {
+        setstrike(true);
+      } else {
+        setstrike(false);
+      }
+    }
+  }, [file, prediction]);
+
+  console.log(strike);
   return (
     <div className="flex flex-col items-center justify-center bg-blue-100 w-full h-screen">
       <h1 className="text-4xl mb-6 text-center font-extrabold uppercase animate-none underline">
@@ -136,7 +154,15 @@ export default function Home() {
           <br />
           <hr />
           <span className="font-semibold  uppercase">Prediction :</span>
-          {prediction}
+          <span
+            className={` ${
+              !strike
+                ? "line-through font-semibold text-red-500"
+                : " text-lime-800 font-extrabold"
+            } uppercase`}
+          >
+            {prediction}
+          </span>
         </p>
       )}
     </div>
